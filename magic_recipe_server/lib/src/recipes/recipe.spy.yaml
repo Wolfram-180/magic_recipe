@@ -1,5 +1,6 @@
 ### Our AI generated Recipe
 class: Recipe
+table: recipes
 fields:
   ### The author of the recipe
   author: String

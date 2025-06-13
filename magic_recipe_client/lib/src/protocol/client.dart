@@ -49,6 +49,13 @@ class EndpointRecipe extends _i1.EndpointRef {
         'generateRecipe',
         {'ingredients': ingredients},
       );
+
+  _i2.Future<List<_i4.Recipe>> getRecipes() =>
+      caller.callServerEndpoint<List<_i4.Recipe>>(
+        'recipe',
+        'getRecipes',
+        {},
+      );
 }
 
 class Client extends _i1.ServerpodClientShared {
