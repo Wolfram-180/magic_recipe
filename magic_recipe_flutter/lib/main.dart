@@ -63,19 +63,27 @@ class MyHomePageState extends State<MyHomePage> {
 
   final _textEditingController = TextEditingController();
 
-  /// Calls the `hello` method of the `greeting` endpoint. Will set either the
-  /// `_resultMessage` or `_errorMessage` field, depending on if the call
-  /// is successful.
-  void _callHello() async {
+  bool _loading = false;
+
+  void _callGenerateRecipe() async {
     try {
-      final result = await client.greeting.hello(_textEditingController.text);
       setState(() {
         _errorMessage = null;
-        _resultMessage = result.message;
+        _resultMessage = null;
+        _loading = true;
+      });
+      final result =
+          await client.recipe.generateRecipe(_textEditingController.text);
+      setState(() {
+        _errorMessage = null;
+        _resultMessage = result;
+        _loading = false;
       });
     } catch (e) {
       setState(() {
         _errorMessage = '$e';
+        _resultMessage = null;
+        _loading = false;
       });
     }
   }
@@ -95,20 +103,26 @@ class MyHomePageState extends State<MyHomePage> {
               child: TextField(
                 controller: _textEditingController,
                 decoration: const InputDecoration(
-                  hintText: 'Enter your name',
+                  hintText: 'Enter your ingredients',
                 ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
               child: ElevatedButton(
-                onPressed: _callHello,
-                child: const Text('Send to Server'),
+                onPressed: _loading ? null : _callGenerateRecipe,
+                child: _loading
+                    ? const Text('Loading...')
+                    : const Text('Send to Server'),
               ),
             ),
-            ResultDisplay(
-              resultMessage: _resultMessage,
-              errorMessage: _errorMessage,
+            Expanded(
+              child: SingleChildScrollView(
+                child: ResultDisplay(
+                  resultMessage: _resultMessage,
+                  errorMessage: _errorMessage,
+                ),
+              ),
             ),
           ],
         ),

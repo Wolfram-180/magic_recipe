@@ -31,6 +31,25 @@ class EndpointGreeting extends _i1.EndpointRef {
       );
 }
 
+/// This is the endpoint that will be used to generate a recipe using the
+/// Google Gemini API. It extends the Endpoint class and implements the
+/// generateRecipe method.
+/// {@category Endpoint}
+class EndpointRecipe extends _i1.EndpointRef {
+  EndpointRecipe(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'recipe';
+
+  /// Pass in a string containing the ingredients and get a recipe back.
+  _i2.Future<String> generateRecipe(String ingredients) =>
+      caller.callServerEndpoint<String>(
+        'recipe',
+        'generateRecipe',
+        {'ingredients': ingredients},
+      );
+}
+
 class Client extends _i1.ServerpodClientShared {
   Client(
     String host, {
@@ -58,12 +77,18 @@ class Client extends _i1.ServerpodClientShared {
               disconnectStreamsOnLostInternetConnection,
         ) {
     greeting = EndpointGreeting(this);
+    recipe = EndpointRecipe(this);
   }
 
   late final EndpointGreeting greeting;
 
+  late final EndpointRecipe recipe;
+
   @override
-  Map<String, _i1.EndpointRef> get endpointRefLookup => {'greeting': greeting};
+  Map<String, _i1.EndpointRef> get endpointRefLookup => {
+        'greeting': greeting,
+        'recipe': recipe,
+      };
 
   @override
   Map<String, _i1.ModuleEndpointCaller> get moduleLookup => {};
